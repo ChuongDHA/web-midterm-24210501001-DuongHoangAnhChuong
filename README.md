@@ -25,8 +25,7 @@ Website giới thiệu danh sách workshop về công nghệ.
 
 ## 5. Link demo
 
-GitHub Pages: ....................................................
-
+GitHub Pages: https://chuongdha.github.io/web-midterm-24210501001-DuongHoangAnhChuong/courses.html
 ## 6. Ảnh giao diện
 
 Thêm ảnh chụp màn hình tại đây.
