@@ -1,4 +1,4 @@
-# EventHub - Website đăng ký sự kiện mini
+# SkillHub - Website đăng ký Workshop
 
 ## 1. Thông tin sinh viên
 
