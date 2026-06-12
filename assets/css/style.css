@@ -1,0 +1,121 @@
+/* assets/css/style.css */
+
+/* 1. KHAI BÁO BIẾN MÀU CHỦ ĐẠO (Dễ quản lý và thay đổi) */
+:root {
+    --bg-main: #0B0C10;       /* Màu nền đen chủ đạo của website */
+    --bg-card: #1F2833;       /* Màu nền xám xanh của các thẻ Card và Form */
+    --text-muted: #ffffff;    /* Màu chữ phụ xám nhạt */
+    --cyan-neon: #66FCF1;     /* Màu xanh Neon làm điểm nhấn nổi bật */
+    --teal-dark: #45A29E;     /* Màu viền xanh mờ */
+}
+
+/* 2. ĐỊNH DẠNG CHUNG CHO TOÀN TRANG */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-muted);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.text-muted {
+    color: white !important;
+}
+
+main {
+    flex: 1; /* Đẩy footer luôn nằm ở dưới cùng màn hình kể cả khi trang ít nội dung */
+}
+
+/* 3. ĐỊNH DẠNG MENU ĐIỀU HƯỚNG (Navbar) */
+.cyber-nav {
+    background-color: var(--bg-card) !important;
+    border-bottom: 2px solid var(--teal-dark);
+    box-shadow: 0 4px 12px rgba(102, 252, 241, 0.1);
+}
+.cyber-nav .navbar-brand {
+    color: var(--cyan-neon) !important;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.cyber-nav .nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.cyber-nav .nav-link:hover, 
+.cyber-nav .nav-link.active {
+    color: var(--cyan-neon) !important;
+    text-shadow: 0 0 8px var(--cyan-neon);
+}
+
+/* 4. ĐỊNH DẠNG BANNER CHÍNH (Hero Section) */
+.cyber-hero {
+    /* Tạo hiệu ứng phủ một lớp màu tối mờ lên trên ảnh nền */
+    background: linear-gradient(rgba(11, 12, 16, 0.85), rgba(31, 40, 51, 0.9)), 
+                url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200') no-repeat center center/cover;
+    padding: 120px 0;
+    border-bottom: 1px solid var(--teal-dark);
+}
+
+/* 5. CÁC LOẠI NÚT BẤM ĐẶC TRƯNG (Buttons) */
+.btn-cyber-primary {
+    background-color: var(--cyan-neon) !important;
+    color: #0B0C10 !important; /* Chữ màu tối trên nền sáng giúp đọc cực rõ, không bị lỗi chìm chữ */
+    font-weight: bold;
+    border: 1px solid var(--cyan-neon) !important;
+    transition: all 0.3s ease-in-out;
+}
+.btn-cyber-primary:hover {
+    background-color: transparent !important;
+    color: var(--cyan-neon) !important;
+    box-shadow: 0 0 15px var(--cyan-neon);
+}
+
+.btn-cyber-outline {
+    background-color: transparent !important;
+    color: var(--cyan-neon) !important;
+    border: 1px solid var(--cyan-neon) !important;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+.btn-cyber-outline:hover {
+    background-color: var(--cyan-neon) !important;
+    color: #0B0C10 !important;
+    box-shadow: 0 0 15px var(--cyan-neon);
+}
+
+/* 6. ĐỊNH DẠNG THẺ CARD KHÓA HỌC */
+.cyber-card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid rgba(102, 252, 241, 0.15) !important;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.cyber-card:hover {
+    transform: translateY(-8px); /* Thẻ nổi lên nhẹ khi di chuột vào */
+    border-color: var(--cyan-neon) !important;
+    box-shadow: 0 8px 20px rgba(102, 252, 241, 0.2);
+}
+.cyber-card .card-title {
+    transition: color 0.3s ease;
+}
+.cyber-card:hover .card-title {
+    color: var(--cyan-neon) !important;
+}
+
+/* 7. VÙNG THÔNG BÁO LỖI FORM VALIDATION */
+.error-msg {
+    font-weight: 500;
+    min-height: 20px; /* Giữ khoảng cách cố định để form không bị giật khi hiện lỗi */
+    display: block;
+}
+
+/* 8. ĐỊNH DẠNG CHO BẢNG DANH SÁCH (Bootstrap Table Custom) */
+.table-dark {
+    background-color: var(--bg-card) !important;
+}
+.table-responsive {
+    background-color: var(--bg-card);
+}

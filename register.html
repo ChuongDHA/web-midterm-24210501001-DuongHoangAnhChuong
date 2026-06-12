@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillHub - Đăng ký Workshop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg cyber-nav sticky-top">
+            <div class="container">
+                <a class="navbar-brand fs-3" href="index.html">SkillHub</a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#cyberNavbar">
+                    <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="cyberNavbar">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="courses.html">Workshop</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="register.html">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link" href="registrations.html">Danh sách đã đăng ký</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5" style="max-width: 700px;">
+        <div class="p-4 rounded shadow" style="background-color: var(--bg-card); border: 1px solid var(--cyan-neon);">
+            <h2 class="text-center fw-bold mb-4" style="color: var(--cyan-neon);">ĐĂNG KÝ THAM GIA WORKSHOP</h2>
+            
+            <form id="registration-form" novalidate>
+                <div class="mb-3">
+                    <label for="fullname" class="form-label small fw-bold text-white">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" id="fullname" class="form-control bg-dark text-white border-secondary" placeholder="Nhập đầy đủ họ và tên">
+                    <div id="fullname-error" class="error-msg small text-danger mt-1"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label small fw-bold text-white">Email SV <span class="text-danger">*</span></label>
+                        <input type="email" id="email" class="form-control bg-dark text-white border-secondary" placeholder="example@student.com">
+                        <div id="email-error" class="error-msg small text-danger mt-1"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label small fw-bold text-white">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="text" id="phone" class="form-control bg-dark text-white border-secondary" placeholder="Ví dụ: 0912345678">
+                        <div id="phone-error" class="error-msg small text-danger mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="student-class" class="form-label small fw-bold text-white">Lớp sinh hoạt <span class="text-danger">*</span></label>
+                    <input type="text" id="student-class" class="form-control bg-dark text-white border-secondary" placeholder="Ví dụ: D21CNTT01">
+                    <div id="student-class-error" class="error-msg small text-danger mt-1"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="course-select" class="form-label small fw-bold text-white">Chọn Workshop muốn tham gia <span class="text-danger">*</span></label>
+                    <select id="course-select" class="form-select bg-dark text-white border-secondary">
+                        <option value="">-- Chọn một workshop trong danh sách --</option>
+                    </select>
+                    <div id="course-select-error" class="error-msg small text-danger mt-1"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="notes" class="form-label small fw-bold text-white">Ghi chú thêm (Nếu có)</label>
+                    <textarea id="notes" rows="3" class="form-control bg-dark text-white border-secondary" placeholder="Nhập các câu hỏi hoặc yêu cầu hỗ trợ nếu có..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-cyber-primary w-100 py-2 fw-bold">XÁC NHẬN ĐĂNG KÝ SỰ KIỆN</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 border-top border-secondary bg-dark text-muted mt-5">
+        <p class="mb-0 small">© 2026 SkillHub Project - Phân hiệu Cà Mau.</p>
+    </footer>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

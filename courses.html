@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillHub - Danh sách Workshop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg cyber-nav sticky-top">
+            <div class="container">
+                <a class="navbar-brand fs-3" href="index.html">SkillHub</a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#cyberNavbar">
+                    <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="cyberNavbar">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="courses.html">Workshop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register.html">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link" href="registrations.html">Danh sách đã đăng ký</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="container my-5">
+        <div class="p-4 rounded shadow mb-5" style="background-color: var(--bg-card); border: 1px solid var(--teal-dark);">
+            <h4 class="fw-bold mb-3 text-white">🔍 BỘ LỌC TÌM KIẾM SỰ KIỆN</h4>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" id="search-input" class="form-control bg-dark text-white border-secondary" placeholder="Nhập tên workshop cần tìm...">
+                </div>
+                <div class="col-md-3">
+                    <select id="category-filter" class="form-select bg-dark text-white border-secondary">
+                        <option value="all">Tất cả danh mục</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Design">UI/UX Design</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="level-filter" class="form-select bg-dark text-white border-secondary">
+                        <option value="all">Tất cả cấp độ</option>
+                        <option value="Beginner">Beginner (Cơ bản)</option>
+                        <option value="Intermediate">Intermediate (Trung cấp)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="reset-btn" class="btn btn-cyber-outline w-100">Xóa bộ lọc</button>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="fw-bold mb-4" style="color: var(--cyan-neon);">TẤT CẢ WORKSHOP ĐANG MỞ</h3>
+        <div class="row" id="all-workshops-grid">
+            </div>
+    </section>
+
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-dark text-white" style="border: 2px solid var(--cyan-neon);">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold" id="modal-title" style="color: var(--cyan-neon);">Tên khóa học</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5 mb-3 mb-md-0">
+                            <img id="modal-image" src="" class="img-fluid rounded border border-secondary" alt="Hình minh họa">
+                        </div>
+                        <div class="col-md-7">
+                            <p class="mb-2"><strong>📅 Ngày tổ chức:</strong> <span id="modal-date"></span></p>
+                            <p class="mb-2"><strong>🏷️ Danh mục:</strong> <span id="modal-category" class="badge bg-secondary text-info"></span></p>
+                            <p class="mb-3"><strong>⚡ Cấp độ:</strong> <span id="modal-level" class="badge bg-info text-dark"></span></p>
+                            <h6 class="fw-bold text-white mb-2">Nội dung chi tiết chương trình:</h6>
+                            <p id="modal-detail" class="text-muted small" style="line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng cửa sổ</button>
+                    <a id="modal-reg-btn" href="register.html" class="btn btn-cyber-primary btn-sm px-4">Đăng ký tham gia ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 border-top border-secondary bg-dark text-muted mt-5">
+        <p class="mb-0 small">© 2026 SkillHub Project - Phân hiệu Cà Mau.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

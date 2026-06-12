@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillHub - Danh sách Đăng ký</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg cyber-nav sticky-top">
+            <div class="container">
+                <a class="navbar-brand fs-3" href="index.html">SkillHub</a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#cyberNavbar">
+                    <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="cyberNavbar">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="courses.html">Workshop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register.html">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="registrations.html">Danh sách đã đăng ký</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h2 class="fw-bold mb-0" style="color: var(--cyan-neon);">Danh Sách Học Viên Đăng Ký</h2>
+            <button id="clear-all-btn" class="btn btn-danger btn-sm px-3">🗑️ Xóa toàn bộ danh sách</button>
+        </div>
+
+        <div class="table-responsive rounded shadow" style="border: 1px solid var(--teal-dark);">
+            <table class="table table-dark table-striped table-hover align-middle mb-0">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 20%">Họ tên</th>
+                        <th style="width: 15%">Lớp</th>
+                        <th style="width: 25%">Khóa học đăng ký</th>
+                        <th style="width: 20%">Liên hệ (Email/SĐT)</th>
+                        <th style="width: 15%" class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="registration-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 border-top border-secondary bg-dark text-muted mt-5">
+        <p class="mb-0 small">© 2026 SkillHub Project - Phân hiệu Cà Mau.</p>
+    </footer>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
