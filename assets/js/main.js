@@ -1,304 +1,262 @@
 // assets/js/main.js
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Tự động kiểm tra xem đang ở trang nào để kích hoạt hàm tương ứng
-    initTrangChu();
-    initTrangDanhSach();
-    initTrangFormDangKy();
-    initTrangBangHocVien();
+// LẮNG NGHE SỰ KIỆN KHI TRANG WEB LOAD XONG
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Kiểm tra nếu đang ở trang Đăng ký (register.html)
+    if (document.getElementById("registration-form")) {
+        initTrangDangKy();
+    }
+    // 2. Kiểm tra nếu đang ở trang Danh sách (registrations.html)
+    if (document.getElementById("registration-table-body")) {
+        initTrangDanhSach();
+    }
+    // 3. Kiểm tra nếu đang ở trang Chủ (index.html)
+    if (document.getElementById("featured-workshop-list")) {
+        initTrangChu();
+    }
+    // 4. Kiểm tra nếu đang ở trang Tổng hợp Workshop (courses.html)
+    if (document.getElementById("all-workshops-grid")) {
+        initTrangWorkshop();
+    }
 });
 
 // =========================================================================
-// HÀM DÙNG CHUNG: Tạo chuỗi HTML cấu trúc thẻ Card khóa học
+// XỬ LÝ LƯU TRỮ VÀ VALIDATION CHO TRANG ĐĂNG KÝ (register.html)
 // =========================================================================
-function renderCardTemplate(item) {
-    return `
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100 cyber-card text-white">
-                <img src="${item.image}" class="card-img-top" alt="${item.title}" style="height: 170px; object-fit: cover;">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-secondary text-info">${item.category}</span>
-                            <span class="badge btn-cyber-primary" style="font-size: 0.75rem;">${item.level}</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-truncate-2" style="font-size: 1.1rem; height: 50px; overflow: hidden;">${item.title}</h5>
-                        <p class="card-text text-muted small mb-1">📅 Ngày tổ chức: ${item.date}</p>
-                        <p class="card-text text-secondary small mb-3 text-truncate-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
-                    </div>
-                    <div class="d-flex gap-2 mt-auto">
-                        <button class="btn btn-cyber-outline btn-sm w-100" onclick="xemChiTietModal(${item.id})">Chi tiết</button>
-                        <a href="register.html?id=${item.id}" class="btn btn-cyber-primary btn-sm w-100 text-center d-flex align-items-center justify-content-center">Đăng ký</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
+function initTrangDangKy() {
+    const form = document.getElementById("registration-form");
+    const courseSelect = document.getElementById("course-select");
 
-// =========================================================================
-// 1. CHỨC NĂNG TRANG CHỦ (index.html): Hiện 3 khóa học nổi bật
-// =========================================================================
-function initTrangChu() {
-    const vungHienThi = document.getElementById("featured-workshop-list");
-    if (!vungHienThi) return; // Nếu không ở trang chủ thì dừng hàm
-
-    let htmlCode = "";
-    // Dùng hàm .slice(0, 3) lấy đúng 3 phần tử đầu tiên trong mảng courses gốc ở data.js
-    courses.slice(0, 3).forEach(item => {
-        htmlCode += renderCardTemplate(item);
-    });
-    vungHienThi.innerHTML = htmlCode;
-}
-
-// =========================================================================
-// 2. CHỨC NĂNG TRANG DANH SÁCH (courses.html): Tìm kiếm & Lọc nâng cao
-// =========================================================================
-function initTrangDanhSach() {
-    const gridDanhSach = document.getElementById("all-workshops-grid");
-    if (!gridDanhSach) return;
-
-    const txtSearch = document.getElementById("search-input");
-    const selCategory = document.getElementById("category-filter");
-    const selLevel = document.getElementById("level-filter");
-    const btnReset = document.getElementById("reset-btn");
-
-    // Hàm thực thi bộ lọc kết hợp đồng thời cả 3 điều kiện (Mục 3.3)
-    function locDuLieu() {
-        const tuKhoa = txtSearch.value.toLowerCase().trim();
-        const dmChon = selCategory.value;
-        const cdChon = selLevel.value;
-
-        // Dùng phương thức .filter() duyệt mảng gốc
-        const mangKetQua = courses.filter(item => {
-            const khopTen = item.title.toLowerCase().includes(tuKhoa);
-            const khopDanhMuc = (dmChon === "all" || item.category === dmChon);
-            const khopCapDo = (cdChon === "all" || item.level === cdChon);
-            return khopTen && khopDanhMuc && khopCapDo;
+    // Tự động nạp danh sách khóa học từ data.js vào ô Chọn Workshop
+    if (courseSelect && typeof courses !== 'undefined') {
+        courseSelect.innerHTML = '<option value="">-- Chọn một workshop trong danh sách --</option>';
+        courses.forEach(w => {
+            courseSelect.innerHTML += `<option value="${w.title}">${w.title}</option>`;
         });
 
-        // Nếu mảng rỗng thì báo lỗi không tìm thấy
-        if (mangKetQua.length === 0) {
-            gridDanhSach.innerHTML = `<div class="col-12 text-center text-muted my-5 fs-5">Không tìm thấy khóa học nào phù hợp với bộ lọc của bạn.</div>`;
+        // Tự động chọn Workshop nếu bấm đăng ký trực tiếp từ trang chủ/chi tiết sang
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+        if (courseId) {
+            const matched = courses.find(c => c.id == courseId);
+            if (matched) courseSelect.value = matched.title;
+        }
+    }
+
+    // Lắng nghe sự kiện gửi form đăng ký
+    form.addEventListener("submit", (e) => {
+        e.preventDefault(); // Ngăn trình duyệt reload trang làm mất dữ liệu
+
+        // Xóa sạch các câu thông báo lỗi cũ
+        document.querySelectorAll(".error-msg").forEach(el => el.innerText = "");
+
+        // Lấy dữ liệu từ các ô nhập liệu (Khớp chính xác ID trong HTML của bạn)
+        const fullname = document.getElementById("fullname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const studentClass = document.getElementById("student-class").value.trim();
+        const course = courseSelect.value;
+        const notes = document.getElementById("notes").value.trim();
+
+        let isValid = true;
+
+        // --- KIỂM TRA BẮT LỖI (VALIDATION) ---
+        if (!fullname) {
+            document.getElementById("fullname-error").innerText = "Vui lòng nhập họ và tên.";
+            isValid = false;
+        }
+        if (!email) {
+            document.getElementById("email-error").innerText = "Vui lòng nhập email sinh viên.";
+            isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById("email-error").innerText = "Định dạng email không hợp lệ.";
+            isValid = false;
+        }
+        if (!phone) {
+            document.getElementById("phone-error").innerText = "Vui lòng nhập số điện thoại.";
+            isValid = false;
+        } else if (!/^[0-9]{10}$/.test(phone)) {
+            document.getElementById("phone-error").innerText = "Số điện thoại phải chứa đúng 10 chữ số.";
+            isValid = false;
+        }
+        if (!studentClass) {
+            document.getElementById("student-class-error").innerText = "Vui lòng nhập lớp sinh hoạt.";
+            isValid = false;
+        }
+        if (!course) {
+            document.getElementById("course-select-error").innerText = "Vui lòng chọn một Workshop muốn tham gia.";
+            isValid = false;
+        }
+
+        // Nếu có lỗi, dừng việc lưu trữ
+        if (!isValid) return;
+
+        // --- TIẾN HÀNH LƯU VÀO LOCALSTORAGE ---
+        const database = JSON.parse(localStorage.getItem("registrations")) || [];
+
+        const newStudent = {
+            id: Date.now(),
+            name: fullname,
+            email: email,
+            phone: phone,
+            class: studentClass,
+            course: course,
+            notes: notes
+        };
+
+        database.push(newStudent);
+        localStorage.setItem("registrations", JSON.stringify(database));
+
+        alert("🎉 Chúc mừng bạn đã đăng ký tham gia thành công!");
+        form.reset();
+        window.location.href = "registrations.html"; // Chuyển hướng sang trang danh sách
+    });
+}
+
+// =========================================================================
+// ĐỌC VÀ HIỂN THỊ DỮ LIỆU LÊN BẢNG (registrations.html)
+// =========================================================================
+function initTrangDanhSach() {
+    const tableBody = document.getElementById("registration-table-body");
+    if (!tableBody) return;
+
+    // Đính kèm hàm load vào đối tượng window để có thể gọi lại sau khi xóa dữ liệu
+    window.loadTableData = function() {
+        const database = JSON.parse(localStorage.getItem("registrations")) || [];
+
+        // Đặt colspan="6" để co giãn chuẩn xác với cấu trúc 6 cột trong bảng HTML của bạn
+        if (database.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Hệ thống chưa ghi nhận dữ liệu đăng ký nào.</td></tr>`;
             return;
         }
 
-        let htmlCode = "";
-        mangKetQua.forEach(item => { htmlCode += renderCardTemplate(item); });
-        gridDanhSach.innerHTML = htmlCode;
-    }
-
-    // Lắng nghe sự kiện người dùng tương tác trực tiếp
-    txtSearch.addEventListener("input", locDuLieu);
-    selCategory.addEventListener("change", locDuLieu);
-    selLevel.addEventListener("change", locDuLieu);
-
-    // Chức năng nút xóa bộ lọc (Reset)
-    btnReset.addEventListener("click", function () {
-        txtSearch.value = "";
-        selCategory.value = "all";
-        selLevel.value = "all";
-        locDuLieu(); // Render lại toàn bộ 8 khóa ban đầu
-    });
-
-    locDuLieu(); // Chạy lần đầu khi mở trang để load đủ 8 khóa
-}
-
-// Hàm mở Modal xem thông tin chi tiết (Mục 3.4)
-// Phải khai báo tường minh ra đối tượng window để nút bấm onclick ở mã HTML gọi được
-window.xemChiTietModal = function (id) {
-    const workshop = courses.find(item => item.id === id);
-    if (!workshop) return;
-
-    // Đổ dữ liệu vào các thẻ tương ứng trong Bootstrap Modal
-    document.getElementById("modal-title").innerText = workshop.title;
-    document.getElementById("modal-image").src = workshop.image;
-    document.getElementById("modal-date").innerText = workshop.date;
-    document.getElementById("modal-category").innerText = workshop.category;
-    document.getElementById("modal-level").innerText = workshop.level;
-    document.getElementById("modal-detail").innerText = workshop.detail;
-    document.getElementById("modal-reg-btn").href = `register.html?id=${workshop.id}`;
-
-    // Lệnh kích hoạt hiển thị Modal của thư viện Bootstrap 5
-    const formModal = new bootstrap.Modal(document.getElementById('detailModal'));
-    formModal.show();
-}
-
-// =========================================================================
-// 3. CHỨC NĂNG TRANG FORM (register.html): Tự động điền & Validation nâng cao
-// =========================================================================
-function initTrangFormDangKy() {
-    const formDangKy = document.getElementById("registration-form");
-    if (!formDangKy) return;
-
-    const dropDownCourse = document.getElementById("course-select");
-
-    // Đổ tên toàn bộ 8 khóa học tự động vào thẻ select option
-    courses.forEach(item => {
-        const optionNode = document.createElement("option");
-        optionNode.value = item.title;
-        optionNode.innerText = item.title;
-        dropDownCourse.appendChild(optionNode);
-    });
-
-    // Đoạn code xử lý nhận tham số ?id=... truyền từ trang khác sang
-    const URLParams = new URLSearchParams(window.location.search);
-    const paramId = parseInt(URLParams.get('id'));
-    if (paramId) {
-        const timKhoaHoc = courses.find(item => item.id === paramId);
-        if (timKhoaHoc) dropDownCourse.value = timKhoaHoc.title; // Tự động chọn trên form
-    }
-
-    // Bắt sự kiện nộp đơn đăng ký
-    formDangKy.addEventListener("submit", function (e) {
-        e.preventDefault(); // Chặn hành vi tải lại trang mặc định của form
-
-        // Lấy giá trị thô từ các trường nhập liệu
-        const nameVal = document.getElementById("fullname").value.trim();
-        const emailVal = document.getElementById("email").value.trim();
-        const phoneVal = document.getElementById("phone").value.trim();
-        const classVal = document.getElementById("student-class").value.trim();
-        const courseVal = dropDownCourse.value;
-        const notesVal = document.getElementById("notes").value.trim();
-
-        let hopLe = true;
-
-        // Reset toàn bộ chuỗi thông báo lỗi cũ
-        document.getElementById("fullname-error").innerText = "";
-        document.getElementById("email-error").innerText = "";
-        document.getElementById("phone-error").innerText = "";
-        document.getElementById("student-class-error").innerText = "";
-        document.getElementById("course-select-error").innerText = "";
-
-        // Kiểm tra Họ và Tên (Không trống và tối thiểu 3 ký tự)
-        if (nameVal === "") {
-            document.getElementById("fullname-error").innerText = "Họ và tên không được bỏ trống.";
-            hopLe = false;
-        } else if (nameVal.length < 3) {
-            document.getElementById("fullname-error").innerText = "Họ và tên phải có độ dài từ 3 ký tự trở lên.";
-            hopLe = false;
-        }
-
-        // Kiểm tra Email (Bằng Regex kiểm định định dạng chuẩn)
-        const bieuThucEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailVal === "") {
-            document.getElementById("email-error").innerText = "Địa chỉ Email bắt buộc phải điền.";
-            hopLe = false;
-        } else if (!bieuThucEmail.test(emailVal)) {
-            document.getElementById("email-error").innerText = "Định dạng Email sinh viên không đúng quy định (Ví dụ: abc@gmail.com).";
-            hopLe = false;
-        }
-
-        // Kiểm tra Số điện thoại (Chỉ chứa số, dài từ 9 đến 11 số)
-        const bieuThucSdt = /^[0-9]{9,11}$/;
-        if (phoneVal === "") {
-            document.getElementById("phone-error").innerText = "Số điện thoại không được để trống.";
-            hopLe = false;
-        } else if (!bieuThucSdt.test(phoneVal)) {
-            document.getElementById("phone-error").innerText = "Số điện thoại không hợp lệ (Chỉ điền ký tự số và độ dài từ 9 đến 11 ký tự).";
-            hopLe = false;
-        }
-
-        // Kiểm tra Lớp học
-        if (classVal === "") {
-            document.getElementById("student-class-error").innerText = "Vui lòng cung cấp tên lớp sinh hoạt của bạn.";
-            hopLe = false;
-        }
-
-        // Kiểm tra xem đã chọn Workshop chưa
-        if (courseVal === "") {
-            document.getElementById("course-select-error").innerText = "Bạn chưa chọn workshop tham gia.";
-            hopLe = false;
-        }
-
-        // NẾU TẤT CẢ DỮ LIỆU HỢP LỆ -> LƯU VÀO LOCALSTORAGE (Mục 3.7)
-        if (hopLe) {
-            // Khởi tạo một đối tượng học viên mới, dùng Date.now() tạo ID độc bản không trùng lặp
-            const hocVienMoi = {
-                id: Date.now(),
-                name: nameVal,
-                email: emailVal,
-                phone: phoneVal,
-                studentClass: classVal,
-                course: courseVal,
-                notes: notesVal
-            };
-
-            // Đọc mảng cũ đang có dưới LocalStorage lên, nếu chưa có thì gán mảng rỗng []
-            let danhSachHocVien = JSON.parse(localStorage.getItem("db_registrations")) || [];
-            
-            // Đẩy đối tượng mới vào mảng
-            danhSachHocVien.push(hocVienMoi);
-            
-            // Ép mảng thành chuỗi JSON và ghi đè lưu xuống LocalStorage
-            localStorage.setItem("db_registrations", JSON.stringify(danhSachHocVien));
-
-            formDangKy.reset(); // Làm trống sạch các ô nhập liệu trên Form
-            alert("Đăng ký thành công! Bạn có thể chuyển sang trang 'Danh sách đã đăng ký' để kiểm tra.");
-        }
-    });
-}
-
-// =========================================================================
-// 4. CHỨC NĂNG TRANG BẢNG LƯU TRỮ (registrations.html): Đọc & Xóa dữ liệu
-// =========================================================================
-function initTrangBangHocVien() {
-    const bodyBang = document.getElementById("registration-table-body");
-    if (!bodyBang) return;
-
-    const btnClearAll = document.getElementById("clear-all-btn");
-
-    // Hàm đọc dữ liệu LocalStorage rồi loop in ra các dòng <tr> của bảng
-    function renderDuLieuBang() {
-        const danhSachHocVien = JSON.parse(localStorage.getItem("db_registrations")) || [];
-
-        // Nếu không có ai đăng ký thì hiển thị dòng thông báo bảng rỗng
-        if (danhSachHocVien.length === 0) {
-            bodyBang.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Hệ thống chưa ghi nhận dữ liệu đăng ký nào.</td></tr>`;
-            return;
-        }
-
-        let htmlRows = "";
-        // Duyệt mảng in dữ liệu, đính kèm chỉ số index để xử lý xóa chính xác
-        danhSachHocVien.forEach((student, index) => {
-            htmlRows += `
+        let html = "";
+        database.forEach((student, index) => {
+            html += `
                 <tr>
-                    <td class="fw-bold text-info">${index + 1}</td>
-                    <td class="fw-bold text-white">${student.name}</td>
-                    <td>${student.studentClass}</td>
-                    <td style="color: var(--cyan-neon); font-weight: 600;">${student.course}</td>
-                    <td>
-                        <div class="small">📧 ${student.email}</div>
-                        <div class="small text-muted">📞 ${student.phone}</div>
-                    </td>
+                    <th scope="row" class="text-center text-white">${index + 1}</th>
+                    <td class="text-white fw-semibold">${student.name}</td>
+                    <td class="text-info">${student.class}</td>
+                    <td style="color: var(--cyan-neon);">${student.course}</td>
+                    <td class="text-muted small">${student.email} <br> ${student.phone}</td>
                     <td class="text-center">
-                        <button class="btn btn-outline-danger btn-sm" onclick="xoaMotHocVien(${student.id})">Xóa</button>
+                        <button class="btn btn-outline-danger btn-sm py-0 px-2 small" onclick="deleteSingleStudent(${student.id})">
+                            Xóa
+                        </button>
                     </td>
                 </tr>
             `;
         });
-        bodyBang.innerHTML = htmlRows;
+        tableBody.innerHTML = html;
     }
 
-    // Chức năng xóa toàn bộ danh sách
-    btnClearAll.addEventListener("click", function () {
-        if (confirm("CẢNH BÁO: Bạn chắc chắn muốn xóa sạch hoàn toàn danh sách học viên đăng ký khỏi LocalStorage không?")) {
-            localStorage.removeItem("db_registrations");
-            renderDuLieuBang(); // Cập nhật lại giao diện bảng rỗng
-        }
+    window.loadTableData();
+}
+
+// Xử lý xóa đơn lẻ 1 học viên
+window.deleteSingleStudent = function(id) {
+    if (confirm("Bạn có chắc chắn muốn xóa học viên này khỏi danh sách không?")) {
+        let database = JSON.parse(localStorage.getItem("registrations")) || [];
+        database = database.filter(student => student.id != id);
+        localStorage.setItem("registrations", JSON.stringify(database));
+        if (window.loadTableData) window.loadTableData();
+    }
+}
+
+// Xử lý xóa toàn bộ danh sách (Nút đỏ góc phải màn hình)
+window.clearAllRegistrations = function() {
+    if (confirm("⚠️ CẢNH BÁO: Bạn có chắc chắn muốn XÓA TOÀN BỘ danh sách học viên đăng ký không? Hành động này không thể hoàn tác!")) {
+        localStorage.removeItem("registrations");
+        if (window.loadTableData) window.loadTableData();
+    }
+}
+
+// =========================================================================
+// ĐỔ DỮ LIỆU ĐỘNG CHO TRANG CHỦ VÀ TRANG TỔNG HỢP WORKSHOP
+// =========================================================================
+function initTrangChu() {
+    const container = document.getElementById("featured-workshop-list");
+    if (!container || typeof courses === 'undefined') return;
+    
+    const featured = courses.slice(0, 3); // Lấy 3 sự kiện đầu tiên làm tiêu biểu
+    let htmlContent = "";
+    featured.forEach(w => {
+        htmlContent += `
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 bg-dark text-white border-secondary">
+                    <img src="${w.image}" class="card-img-top" alt="${w.title}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge bg-info text-dark mb-2 align-self-start">${w.category}</span>
+                        <h5 class="card-title fw-bold" style="color: var(--cyan-neon);">${w.title}</h5>
+                        <p class="card-text text-muted small flex-grow-1">${w.description}</p>
+                        <p class="card-text small mb-3">📅 Ngày: ${w.date}</p>
+                        <button class="btn btn-cyber-outline w-100" onclick="handleDetailClick(${w.id})">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        `;
     });
+    container.innerHTML = htmlContent;
+}
 
-    // Khai báo hàm xóa một dòng ra phạm vi toàn cục để nút bấm onclick gọi được
-    window.xoaMotHocVien = function (id) {
-        if (confirm("Bạn có chắc chắn muốn xóa học viên này không?")) {
-            let danhSachHocVien = JSON.parse(localStorage.getItem("db_registrations")) || [];
-            // Dùng .filter() giữ lại những học viên có id khác với id cần xóa
-            danhSachHocVien = danhSachHocVien.filter(student => student.id !== id);
-            // Ghi đè lại mảng mới cập nhật xuống bộ nhớ trình duyệt
-            localStorage.setItem("db_registrations", JSON.stringify(danhSachHocVien));
-            renderDuLieuBang(); // Cập nhật lại giao diện bảng ngay lập tức
-        }
+function initTrangWorkshop() {
+    const grid = document.getElementById("all-workshops-grid");
+    if (!grid || typeof courses === 'undefined') return;
+    
+    let html = "";
+    courses.forEach(w => {
+        html += `
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 bg-dark text-white border-secondary">
+                    <img src="${w.image}" class="card-img-top" alt="${w.title}" style="height: 160px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-secondary text-info">${w.category}</span>
+                            <span class="badge bg-dark border border-info text-info small">${w.level || "Cơ bản"}</span>
+                        </div>
+                        <h6 class="card-title fw-bold" style="color: var(--cyan-neon); height: 40px; overflow: hidden;">${w.title}</h6>
+                        <p class="card-text text-muted small flex-grow-1" style="overflow: hidden;">${w.description}</p>
+                        <p class="card-text small mb-2 text-secondary">📅 Ngày: ${w.date}</p>
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-cyber-outline btn-sm w-100" onclick="handleDetailClick(${w.id})">Chi tiết</button>
+                            <a href="register.html?id=${w.id}" class="btn btn-cyber-primary btn-sm w-100">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    });
+    grid.innerHTML = html;
+}
+
+// HÀM HIỂN THỊ POPUP MODAL CHI TIẾT SỰ KIỆN KHI BẤM "XEM CHI TIẾT"
+window.handleDetailClick = function(id) {
+    if (typeof courses === 'undefined') return;
+    const workshop = courses.find(w => w.id == id);
+    
+    if (!workshop) {
+        console.error("Không tìm thấy dữ liệu của Workshop với ID:", id);
+        return;
     }
 
-    renderDuLieuBang(); // Chạy hàm hiển thị dữ liệu ngay khi mở trang
+    // Gán dữ liệu tìm được vào các thành phần tương ứng của khung Modal trong HTML
+    if (document.getElementById('modal-title')) document.getElementById('modal-title').innerText = workshop.title;
+    if (document.getElementById('modal-image')) document.getElementById('modal-image').src = workshop.image || '';
+    if (document.getElementById('modal-date')) document.getElementById('modal-date').innerText = workshop.date;
+    if (document.getElementById('modal-category')) document.getElementById('modal-category').innerText = workshop.category;
+    if (document.getElementById('modal-level')) document.getElementById('modal-level').innerText = workshop.level || "Cơ bản";
+    
+    if (document.getElementById('modal-detail')) {
+        document.getElementById('modal-detail').innerText = workshop.detail || workshop.description || "Chưa có nội dung mô tả chi tiết cho sự kiện này.";
+    }
+    
+    if (document.getElementById('modal-reg-btn')) {
+        document.getElementById('modal-reg-btn').href = `register.html?id=${workshop.id}`;
+    }
+
+    // Kích hoạt hiển thị Modal Bootstrap lên màn hình
+    const modalElement = document.getElementById('detailModal');
+    if (modalElement) {
+        const detailModal = new bootstrap.Modal(modalElement);
+        detailModal.show();
+    }
 }
