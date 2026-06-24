@@ -203,29 +203,85 @@ function initTrangWorkshop() {
     const grid = document.getElementById("all-workshops-grid");
     if (!grid || typeof courses === 'undefined') return;
     
-    let html = "";
-    courses.forEach(w => {
-        html += `
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 bg-dark text-white border-secondary">
-                    <img src="${w.image}" class="card-img-top" alt="${w.title}" style="height: 160px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge bg-secondary text-info">${w.category}</span>
-                            <span class="badge bg-dark border border-info text-info small">${w.level || "Cơ bản"}</span>
-                        </div>
-                        <h6 class="card-title fw-bold" style="color: var(--cyan-neon); height: 40px; overflow: hidden;">${w.title}</h6>
-                        <p class="card-text text-muted small flex-grow-1" style="overflow: hidden;">${w.description}</p>
-                        <p class="card-text small mb-2 text-secondary">📅 Ngày: ${w.date}</p>
-                        <div class="mt-auto d-flex gap-2">
-                            <button class="btn btn-cyber-outline btn-sm w-100" onclick="handleDetailClick(${w.id})">Chi tiết</button>
-                            <a href="register.html?id=${w.id}" class="btn btn-cyber-primary btn-sm w-100">Đăng ký</a>
+    // 1. LẤY CHÍNH XÁC CÁC ID TỪ FILE COURSES.HTML CỦA BẠN
+    const searchInput = document.getElementById("search-input");      
+    const categorySelect = document.getElementById("category-filter");  
+    const levelSelect = document.getElementById("level-filter");        
+    const clearFilterBtn = document.getElementById("reset-btn");  
+
+    // Hàm vẽ danh sách card Workshop ra màn hình
+    function renderGrid(dataList) {
+        let html = "";
+        dataList.forEach(w => {
+            html += `
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 bg-dark text-white border-secondary">
+                        <img src="${w.image}" class="card-img-top" alt="${w.title}" style="height: 160px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-secondary text-info">${w.category}</span>
+                                <span class="badge bg-dark border border-info text-info small">${w.level || "Beginner"}</span>
+                            </div>
+                            <h6 class="card-title fw-bold" style="color: var(--cyan-neon); height: 40px; overflow: hidden;">${w.title}</h6>
+                            <p class="card-text text-muted small flex-grow-1" style="overflow: hidden;">${w.description}</p>
+                            <p class="card-text small mb-2 text-secondary">📅 Ngày: ${w.date}</p>
+                            <div class="mt-auto d-flex gap-2">
+                                <button class="btn btn-cyber-outline btn-sm w-100" onclick="handleDetailClick(${w.id})">Chi tiết</button>
+                                <a href="register.html?id=${w.id}" class="btn btn-cyber-primary btn-sm w-100">Đăng ký</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>`;
-    });
-    grid.innerHTML = html;
+                </div>`;
+            });
+        if (dataList.length === 0) {
+            html = `<div class="col-12 text-center text-muted py-5">Không có khóa học nào phù hợp với bộ lọc hiện tại.</div>`;
+        }
+        grid.innerHTML = html;
+    }
+
+    // 2. THUẬT TOÁN LỌC KẾT HỢP (Khớp 100% với value="all", "Frontend", "Backend", "Design"...)
+    function executeFilter() {
+        const keyword = searchInput ? searchInput.value.toLowerCase().trim() : "";
+        const selectedCategory = categorySelect ? categorySelect.value : "all";
+        const selectedLevel = levelSelect ? levelSelect.value : "all";
+
+        const filteredResult = courses.filter(w => {
+            // Điều kiện 1: Khớp từ khóa gõ ở ô Tìm kiếm
+            const matchKeyword = w.title.toLowerCase().includes(keyword) || 
+                                 w.description.toLowerCase().includes(keyword);
+            
+            // Điều kiện 2: Khớp Dropdown Danh mục (Nếu chọn "all" thì bỏ qua không lọc)
+            const matchCategory = selectedCategory === "all" || w.category === selectedCategory;
+            
+            // Điều kiện 3: Khớp Dropdown Cấp độ (Beginner / Intermediate)
+            const matchLevel = selectedLevel === "all" || 
+                               w.level === selectedLevel || 
+                               (selectedLevel === "Beginner" && !w.level);
+
+            // Bắt buộc thỏa mãn đồng thời cả 3 điều kiện
+            return matchKeyword && matchCategory && matchLevel;
+        });
+
+        renderGrid(filteredResult);
+    }
+
+    // 3. LẮNG NGHE SỰ KIỆN THAY ĐỔI TRÊN GIAO DIỆN
+    if (searchInput) searchInput.addEventListener("input", executeFilter);
+    if (categorySelect) categorySelect.addEventListener("change", executeFilter);
+    if (levelSelect) levelSelect.addEventListener("change", executeFilter);
+
+    // 4. XỬ LÝ NÚT "XÓA BỘ LỌC" (Đưa các ô về trạng thái ban đầu và hiện lại tất cả dữ liệu)
+    if (clearFilterBtn) {
+        clearFilterBtn.addEventListener("click", () => {
+            if (searchInput) searchInput.value = "";
+            if (categorySelect) categorySelect.value = "all";
+            if (levelSelect) levelSelect.value = "all";
+            renderGrid(courses); 
+        });
+    }
+
+    // Tải trang lên thì mặc định vẽ toàn bộ danh sách gốc ra trước
+    renderGrid(courses);
 }
 
 // HÀM HIỂN THỊ POPUP MODAL CHI TIẾT SỰ KIỆN KHI BẤM "XEM CHI TIẾT"
